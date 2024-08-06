@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   menu.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:22:28 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/08/06 08:24:11 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/08/06 12:24:35 by mait-elk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,7 @@ void	destroy_this(void **img_ptr)
 void	destroy_menu(t_menu *menu)
 {
 	t_data	*data;
-	int		i;
 
-	i = 0;
-	(void)menu;
 	data = data_hook(NULL);
 	destroy_this(&menu->logo.img_ptr);
 	destroy_this(&menu->bg.img_ptr);
@@ -46,8 +43,6 @@ void	destroy_menu(t_menu *menu)
 	destroy_this(&menu->exit_0.img_ptr);
 	destroy_this(&menu->music_0.img_ptr);
 	destroy_this(&menu->music_1.img_ptr);
-	while (i < 5)
-		destroy_this(&data->player.hand_frames[i++].img_ptr);
 }
 
 void	load_menu_images(t_menu *menu)

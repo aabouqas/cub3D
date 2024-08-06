@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   play_back.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 18:58:35 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/08/06 11:56:33 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/08/06 12:48:29 by mait-elk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,19 @@ void	tracker(void)
 void	*make_sound(void *param)
 {
 	pid_t	child;
+	int		ret;
 
 	child = fork();
 	(void)param;
 	if (child == 0)
 	{
+		close (2);
 		execlp("afplay", "afplay", "assets/nav_effect.mp3", NULL);
-		exit (0);
+		exit (1);
 	}
-	waitpid(child, NULL, 0);
+	waitpid(child, &ret, 0);
+	if (WEXITSTATUS(ret) == 1)
+		print(2, "\033[33mWARNING : Failed to play sound effect\033[0m", 1);
 	return (NULL);
 }
 
@@ -69,7 +73,7 @@ void	play_music(void)
 	{
 		close (2);
 		if (data->music == 0)
-			execlp("afplay", "afplay", "assets/sounds/main_menu5.mp3", NULL);
+			execlp("afplay", "afplay", "assets/sounds/main_menu.mp3", NULL);
 		else if (data->music == 1)
 			execlp("afplay", "afplay", "assets/sounds/cave.mp3", NULL);
 		exit (1);
