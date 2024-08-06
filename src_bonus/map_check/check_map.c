@@ -32,15 +32,12 @@ bool	is_valid_door(t_vector pos)
 	map = data->map;
 	if (map[pos.y][pos.x] == 'D')
 	{
-		// if (map[pos.y][pos.x - 1] == '0' && map[pos.y][pos.x + 1] == '0')
-		// 	if (map[pos.y - 1][pos.x] == '0' && map[pos.y + 1][pos.x] == '0')
-		// 		return (print(2, "Door without walls is not a Door", 1), false);
 		if (map[pos.y][pos.x - 1] == '1' && map[pos.y][pos.x + 1] == '1'
 			&& map[pos.y - 1][pos.x] == '0' && map[pos.y + 1][pos.x] == '0')
-				return (true);
+			return (true);
 		else if (map[pos.y][pos.x - 1] == '0' && map[pos.y][pos.x + 1] == '0'
 			&& map[pos.y - 1][pos.x] == '1' && map[pos.y + 1][pos.x] == '1')
-				return (true);
+			return (true);
 		else
 			return (print(2, "Door error", 1), false);
 	}

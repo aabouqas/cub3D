@@ -6,7 +6,7 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/04 16:37:55 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/08/06 10:42:59 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/08/06 11:57:56 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	signal_handler(int signal)
 
 	if (signal == SIGUSR1)
 	{
-		data_hook(NULL)->bgm && kill (data_hook(NULL)->bgm, SIGKILL);
+		(data_hook(NULL)->bgm) && kill (data_hook(NULL)->bgm, SIGKILL);
 		safe_exit (0);
 	}
 	if (signal == SIGUSR2)
@@ -26,7 +26,7 @@ void	signal_handler(int signal)
 		if (_switcher == false)
 		{
 			data_hook(NULL)->music_switch = false;
-			data_hook(NULL)->bgm && kill (data_hook(NULL)->bgm, SIGKILL);
+			(data_hook(NULL)->bgm) && kill (data_hook(NULL)->bgm, SIGKILL);
 		}
 		else
 			data_hook(NULL)->music_switch = true;
@@ -37,7 +37,7 @@ void	signal_handler(int signal)
 	if (signal == SIGPROF)
 	{
 		data_hook(NULL)->music = data_hook(NULL)->music == 0;
-		data_hook(NULL)->bgm && kill (data_hook(NULL)->bgm, SIGKILL);
+		(data_hook(NULL)->bgm) && kill (data_hook(NULL)->bgm, SIGKILL);
 	}
 }
 

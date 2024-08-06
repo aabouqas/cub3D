@@ -6,7 +6,7 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 17:07:40 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/06 11:47:32 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/08/06 12:00:28 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -453,14 +453,14 @@ void		rest_player(void);
 void		put_to_win(int posx, int pox_y, t_image image);
 void		put_cub(t_data *data, t_vector2 offset, int size);
 
-
 /*
 	* PLAY BACK
 */
-void	tracker(void);
-void	server (void);
-void	play_effect(void);
-void	signal_handler(int signal);
-bool	catch_signals(void);
+
+void		tracker(void);
+void		server(void);
+void		play_effect(void);
+void		signal_handler(int signal);
+bool		catch_signals(void);
 
 #endif

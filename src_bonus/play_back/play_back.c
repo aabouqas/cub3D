@@ -6,7 +6,7 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 18:58:35 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/08/06 10:19:01 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/08/06 11:56:33 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	play_music(void)
 	waitpid(data->bgm, &val, 0);
 	if (WEXITSTATUS(val) == 1)
 	{
-		print(2, "\033[33mcub3D_bonus::WARNING : Failed to play music\033[0m", 1);
+		print(2, "\033[33mWARNING : Failed to play music\033[0m", 1);
 		data->music_switch = false;
 	}
 }
