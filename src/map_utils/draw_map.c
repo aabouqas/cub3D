@@ -6,11 +6,11 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/08 08:35:46 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/06 11:10:00 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cub3d_bonus.h>
+#include <cub3d.h>
 
 void	draw_player(double player_size)
 {

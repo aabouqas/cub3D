@@ -6,7 +6,7 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 12:57:58 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/07/31 16:53:15 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	set_directions(t_ray *ray, int ray_type)
 	ray->side = VERTICAL;
 }
 
-int	check_hit(t_vector2 coords, t_ray *ray)
+int	check_hit(t_vector2 coords, t_ray *ray, t_vector2 *point, t_vector2 step)
 {
 	t_size		grid;
 	t_data		*data;
@@ -68,6 +68,16 @@ int	check_hit(t_vector2 coords, t_ray *ray)
 	grid = (t_size){(coords.x / TILE_SIZE), coords.y / TILE_SIZE};
 	if (grid.width > screen_size.width || grid.height > screen_size.height)
 		return (true);
+	if (data->map[grid.height][grid.width] == 'D')
+	{
+		point->x += step.x / 2;
+		point->y += step.y / 2;
+		if (ray->side == HORIZONTAL)
+			ray->hit_door_h = true;
+		if (ray->side == VERTICAL)
+			ray->hit_door_v = true;
+		return (1);
+	}
 	if (data->map[grid.height][grid.width] == '1')
 	{
 		ray->hit_wall = true;

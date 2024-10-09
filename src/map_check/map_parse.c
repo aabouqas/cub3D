@@ -6,11 +6,11 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 09:57:01 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/07/20 16:44:17 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/07/23 10:33:25 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/cub3d.h"
+#include <cub3d.h>
 
 static bool	check_texture_content(char	*filename)
 {
@@ -88,9 +88,10 @@ static bool	is_valid_line(t_data *data, char *line, int i)
 			check_color(line[0], value);
 		return (true);
 	}
-	if ((int)safe_strlen(line) > data->scene_info.map_xsize)
-		data->scene_info.map_xsize = safe_strlen(line);
-	return (data->scene_info.map_ysize++, true);
+	if ((int)safe_strlen(line) > data->scene_info.map_width)
+		data->scene_info.map_width = safe_strlen(line);
+	data->scene_info.map_height++;
+	return (true);
 }
 
 void	init_lines(void)
@@ -100,7 +101,7 @@ void	init_lines(void)
 
 	i = 0;
 	line = get_next_line(data_hook(NULL)->fd_file_input);
-	while (line)
+	while (line && *line)
 	{
 		if (ft_strchr(line, '\n'))
 			*ft_strchr(line, '\n') = '\0';
@@ -116,8 +117,8 @@ void	init_lines(void)
 			eput_error("invalid newline place", "newline", 1);
 		line = get_next_line(data_hook(NULL)->fd_file_input);
 	}
-	if (data_hook(NULL)->fd_file_input > 0)
+	if (data_hook(NULL)->fd_file_input)
 		close (data_hook(NULL)->fd_file_input);
-	if (data_hook(NULL)->map == NULL || *data_hook(NULL)->map == NULL)
+	if (data_hook(NULL)->map == NULL)
 		eput_error("is empty", "[map]", 1);
 }

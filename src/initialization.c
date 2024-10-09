@@ -6,11 +6,30 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 09:47:26 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/02 09:10:45 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cub3d.h>
+
+void	reset_doors(char **map)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (map && map[i])
+	{
+		j = 0;
+		while (map && map[i][j] != '\0')
+		{
+			if (map && map[i][j] == 'd')
+				map[i][j] = 'D';
+			j++;
+		}
+		i++;
+	}
+}
 
 void	make_map_square(void)
 {
@@ -24,11 +43,11 @@ void	make_map_square(void)
 	data = data_hook(NULL);
 	map = data->map;
 	new_map = ft_calloc(data->screen.height + 1, sizeof(char *));
-	while (map && map[size.height])
+	while (map[size.height])
 	{
 		line_size = safe_strlen(map[size.height]);
 		new_map[size.height] = ft_calloc(data->screen.width + 1, 1);
-		if (new_map && new_map[size.height] == NULL)
+		if (new_map[size.height] == NULL)
 		{
 			free_tab(new_map);
 			safe_exit(1);
@@ -81,6 +100,9 @@ void	data_init(t_data *data, int ac, char **av)
 {
 	data_hook(data);
 	ft_bzero(data, sizeof(t_data));
+	data->music_switch = true;
+	tracker();
+	server();
 	check_file(ac, av);
 	_mlx_init (data);
 	init_lines();

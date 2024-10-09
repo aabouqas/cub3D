@@ -6,11 +6,11 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 08:32:30 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/08/02 08:55:38 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cub3d_bonus.h>
+#include <cub3d.h>
 
 int	ev_destroy(t_data *data)
 {

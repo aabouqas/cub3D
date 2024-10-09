@@ -6,7 +6,7 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 15:11:56 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/07/31 16:54:14 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,8 @@ t_vector2	send_horizontal(t_ray *ray)
 	while (start.x > 0 && start.x < width && start.y > 0 && start.y < height)
 	{
 		ray->side = HORIZONTAL;
-		if (check_hit((t_vector2){start.x, start.y - ray->face_up}, ray))
+		if (check_hit((t_vector2){start.x, start.y - ray->face_up}, \
+			ray, &start, step))
 			break ;
 		start.x += step.x;
 		start.y += step.y;
@@ -48,7 +49,8 @@ t_vector2	send_vertical(t_ray *ray)
 	while (start.x > 0 && start.x < width && start.y > 0 && start.y < height)
 	{
 		ray->side = VERTICAL;
-		if (check_hit((t_vector2){start.x - ray->face_left, start.y}, ray))
+		if (check_hit((t_vector2){start.x - ray->face_left, start.y}, \
+			ray, &start, step))
 			break ;
 		start.x += step.x;
 		start.y += step.y;
@@ -74,11 +76,13 @@ void	send_ray(t_ray *ray)
 		set_directions(ray, HORIZONTAL);
 		ray->intercept = intercept_h;
 		ray->side = HORIZONTAL;
+		ray->hit_door = ray->hit_door_h;
 		ray->distance = dis_h;
 		return ;
 	}
 	set_directions(ray, VERTICAL);
 	ray->intercept = intercept_v;
 	ray->side = VERTICAL;
+	ray->hit_door = ray->hit_door_v;
 	ray->distance = dis_v;
 }

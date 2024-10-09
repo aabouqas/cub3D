@@ -6,11 +6,11 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/21 15:13:38 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/08/06 11:43:28 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cub3d_bonus.h>
+#include "../../include/cub3d.h"
 
 void	handle_select_event(t_data *data)
 {

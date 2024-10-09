@@ -6,11 +6,11 @@
 /*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 15:11:56 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/02 08:52:14 by aabouqas         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cub3d.h>
+#include "../../include/cub3d.h"
 
 void	draw_line(t_image *image, int color, t_vector2 from, t_vector2 to)
 {
@@ -56,40 +56,71 @@ int	game_loop(t_data *data)
 
 	handle_input(data, deg_to_rad(data->player.angle));
 	mlx_clear_window(data->mlx.mlx_ptr, data->mlx.window_ptr);
-	put_bgd(&data->scene_layer, data->ceiling, data->floor);
+	if (data->game_started == false)
+		return (show_menu(), 1);
+	draw_mini_map();
 	angle = data->player.angle - (FOV / 2);
 	angle -= 360 * (angle > 360);
 	angle += 360 * (angle < 0);
 	i = 0;
 	while (i < WIN_WIDTH)
 	{
+		ft_bzero(&ray, sizeof(t_ray));
 		ray.angle = angle;
 		send_ray(&ray);
-		put_wall(data, i, &ray);
+		put_wall(data, i++, &ray);
 		angle += (float) FOV / WIN_WIDTH;
-		i++;
 	}
-	mlx_put_image_to_window(data->mlx.mlx_ptr, data->mlx.window_ptr,
-		data->scene_layer.img_ptr, 0, 0);
+	put_2_window();
 	return (0);
+}
+
+
+int	mouseEvent(int n) {
+	t_data	*data;
+	static	unsigned char nn = 0;
+
+	data = data_hook(NULL);
+	if (n == MIDDLE_CLICK && data->game_started == false)
+		handle_select_event(data);
+	// if (nn % 2 == 0) {
+	// 	nn++;
+	// 	return 0;
+	// }
+	if (n == SCROLL_UP || n == SCROLL_DOWN)
+		kill (data->server, SIGHUP);
+	if (n == SCROLL_UP)
+		handle_key_up(data);
+	if (n == SCROLL_DOWN)
+		handle_key_down(data);
+	nn++;
+	return 0;
 }
 
 void	run_game(t_data *data)
 {
 	t_vector	map_size;
+	int			def;
 
-	map_size.x = data->scene_info.map_xsize * TILE_SIZE;
-	map_size.y = data->scene_info.map_ysize * TILE_SIZE;
-	data->scene_layer = t_image_create(WIN_WIDTH, WIN_HEIGHT, 0xffffffff);
+	def = 0xffffffff;
+	get_cf_color(data);
+	map_size.x = data->scene_info.map_width * TILE_SIZE;
+	map_size.y = data->scene_info.map_height * TILE_SIZE;
+	data->scene_layer = t_image_create(WIN_WIDTH, WIN_HEIGHT, def);
+	data->minimap_layer = t_image_create (WIN_WIDTH * MPSIZE,WIN_WIDTH * MPSIZE, def);
 	init_player(data);
 	data->texture_ea = t_image_load_xpm(data->scene_info.east_texture);
 	data->texture_we = t_image_load_xpm(data->scene_info.west_texture);
 	data->texture_so = t_image_load_xpm(data->scene_info.south_texture);
 	data->texture_no = t_image_load_xpm(data->scene_info.north_texture);
-	get_cf_color(data);
+	data->texture_door = t_image_load_xpm("textures/door.xpm");
+	data->north_icon = t_image_load_xpm("textures/N_ICON.xpm");
+	load_menu_images(&data->menu);
 	mlx_loop_hook(data->mlx.mlx_ptr, game_loop, data);
 	mlx_hook(data->mlx.window_ptr, ON_KEYDOWN, 0, ev_key_down, data);
 	mlx_hook(data->mlx.window_ptr, ON_KEYUP, 0, ev_key_up, data);
+	mlx_hook(data->mlx.window_ptr, ON_MOUSEMOVE, 0, ev_mouse_moved, data);
 	mlx_hook(data->mlx.window_ptr, ON_DESTROY, 0, ev_destroy, data);
+	mlx_mouse_hook(data->mlx.window_ptr, mouseEvent, data);
 	mlx_loop(data->mlx.mlx_ptr);
 }

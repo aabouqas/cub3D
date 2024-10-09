@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cubs.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 12:55:05 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/06 12:55:06 by mait-elk         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cub3d_bonus.h>
+#include <cub3d.h>
 
 void	init_face_1(t_vector2 *points, t_vector2 offset, int size, int angle)
 {

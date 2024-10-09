@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   play_back.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/03 18:58:35 by aabouqas          #+#    #+#             */
-/*   Updated: 2024/08/06 12:48:29 by mait-elk         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cub3d_bonus.h>
+#include "../../include/cub3d.h"
 
 void	tracker(void)
 {

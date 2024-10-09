@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   safe_str2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/26 15:21:53 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/05/29 10:47:09 by mait-elk         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@ char	*safe_strdup(char *s)
 	char	*res;
 
 	i = 0;
+	if (s == NULL)
+		return (NULL);
 	res = malloc(ft_strlen(s) + 1);
-	if (!res)
+	if (res == NULL)
 		safe_exit(1);
 	while (*s)
 	{

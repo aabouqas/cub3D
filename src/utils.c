@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/25 09:17:07 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/03 17:14:04 by mait-elk         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,22 @@ void	destroy_textures(void)
 {
 	t_data			*data;
 	t_scene_info	scene;
+	int				i;
 
+	i = 0;
 	data = data_hook(NULL);
+	if (data->mlx.mlx_ptr == NULL)
+		return ;
 	scene = data->scene_info;
-	if (data->texture_ea.img_ptr != NULL)
-		mlx_destroy_image(data->mlx.mlx_ptr, data->texture_ea.img_ptr);
-	if (data->texture_no.img_ptr != NULL)
-		mlx_destroy_image(data->mlx.mlx_ptr, data->texture_no.img_ptr);
-	if (data->texture_so.img_ptr != NULL)
-		mlx_destroy_image(data->mlx.mlx_ptr, data->texture_so.img_ptr);
-	if (data->texture_we.img_ptr != NULL)
-		mlx_destroy_image(data->mlx.mlx_ptr, data->texture_we.img_ptr);
-	if (data->scene_layer.img_ptr != NULL)
-		mlx_destroy_image(data->mlx.mlx_ptr, data->scene_layer.img_ptr);
-	if (data->minimap_layer.img_ptr != NULL)
-		mlx_destroy_image(data->mlx.mlx_ptr, data->minimap_layer.img_ptr);
+	destroy_this(&data->texture_ea.img_ptr);
+	destroy_this(&data->texture_no.img_ptr);
+	destroy_this(&data->texture_so.img_ptr);
+	destroy_this(&data->texture_we.img_ptr);
+	destroy_this(&data->north_icon.img_ptr);
+	destroy_this(&data->north_icon.img_ptr);
+	destroy_this(&data->north_icon.img_ptr);
+	while (i < 5)
+		destroy_this(&data->player.hand_frames[i++].img_ptr);
 }
 
 void	safe_exit(int status)
@@ -47,17 +48,19 @@ void	safe_exit(int status)
 	t_data	*data;
 
 	data = data_hook(NULL);
+	destroy_menu(&data->menu);
 	free_tab(data->lines);
 	data->lines = NULL;
 	free_tab(data->map);
 	data->map = NULL;
 	ft_bzero(&data->scene_info, sizeof(t_scene_info));
-	close(data->fd_file_input);
-	if (data->mlx.mlx_ptr != NULL && data->mlx.window_ptr != NULL)
-		mlx_destroy_window(data->mlx.mlx_ptr, data->mlx.window_ptr);
+	if (data->fd_file_input != 0)
+		close(data->fd_file_input);
 	if (data->mlx.mlx_ptr != NULL)
 		destroy_textures();
-	exit (status);
+	if (data->mlx.mlx_ptr != NULL && data->mlx.window_ptr != NULL)
+		mlx_destroy_window (data->mlx.mlx_ptr, data->mlx.window_ptr);
+	exit(status);
 }
 
 void	set_screen_size(void)

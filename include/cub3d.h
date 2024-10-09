@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3d.h                                            :+:      :+:    :+:   */
+/*   cub3d.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/24 17:07:40 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/06 12:27:43 by mait-elk         ###   ########.fr       */
+/*   Updated: 2024/09/26 13:55:59 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CUB3D_H
-# define CUB3D_H
+#ifndef CUB3D_BONUS_H
+# define CUB3D_BONUS_H
 
-# include <libft.h>
-# include <mlx.h>
+# include "../libft/libft.h"
+# include <errno.h>
+# include <unistd.h>
 # include <stdlib.h>
 # include <math.h>
 # include <fcntl.h>
 # include <stdbool.h>
 # include <stdio.h>
+# include "mlx.h"
+# include <signal.h>
+# include <pthread.h>
 
 /*
 	* Text Colors
@@ -49,6 +53,7 @@
 	* 	MLX KEYS AND EVENTS
 */
 # define KEY_ESC       53
+# define KEY_E		   14
 # define KEY_W         13
 # define KEY_A         0
 # define KEY_S         1
@@ -59,6 +64,7 @@
 # define KEY_DOWN      125
 # define KEY_LEFT      123
 # define KEY_RIGHT     124
+# define KEY_RETURN    36
 
 # define ON_KEYDOWN    2
 # define ON_KEYUP      3
@@ -68,15 +74,22 @@
 # define ON_EXPOSE     12
 # define ON_DESTROY    17
 
+# define LEFT_CLICK    1
+# define RIGHT_CLICK   2
+# define MIDDLE_CLICK  3
+# define SCROLL_UP     4
+# define SCROLL_DOWN   5
+
 /*
 	* ATTRIBUTES
 */
 # define WIN_WIDTH 1440
 # define WIN_HEIGHT 920
 # define TILE_SIZE 32
-# define PLAYER_SPEED 1.8
+# define P_SPEED 1.8
 # define CAM_SENS 1.5
 # define FOV 60
+# define MPSIZE 0.15
 
 typedef struct s_settings
 {
@@ -122,6 +135,7 @@ typedef struct s_keys_status
 	bool	left;
 	bool	right;
 	bool	space;
+	bool	shift;
 }	t_keys_status;
 
 typedef struct s_vector
@@ -129,6 +143,8 @@ typedef struct s_vector
 	int		x;
 	int		y;
 }	t_vector;
+
+void		draw_mini_map(void);
 
 typedef struct s_vector2
 {
@@ -153,8 +169,11 @@ typedef struct s_ray
 	bool		face_down;
 	bool		face_left;
 	bool		face_right;
-	bool		hit_wall;
 	short		side;
+	bool		hit_wall;
+	bool		hit_door_h;
+	bool		hit_door_v;
+	bool		hit_door;
 }	t_ray;
 
 typedef struct s_size
@@ -162,6 +181,15 @@ typedef struct s_size
 	size_t	width;
 	size_t	height;
 }	t_size;
+
+typedef struct s_select
+{
+	int		item;
+	bool	new_game_1;
+	bool	exit_selected;
+	bool	cont_selected;
+	bool	cont_2;
+}	t_select;
 
 typedef struct s_image
 {
@@ -182,8 +210,8 @@ typedef struct s_scene_info
 	char		*east_texture;
 	t_color		floor_color;
 	t_color		ceiling_color;
-	int			map_xsize;
-	int			map_ysize;
+	int			map_width;
+	int			map_height;
 }	t_scene_info;
 
 typedef struct s_mlx
@@ -197,10 +225,48 @@ typedef struct s_player
 	t_vector2	position;
 	t_image		texture;
 	float		angle;
+	float		real_head;
+	float		head_angle;
+	bool		is_walking;
+	t_image		hand_frames[5];
 }	t_player;
+
+typedef struct s_mouse
+{
+	bool	to_left;
+	bool	to_right;
+	bool	to_up;
+	bool	to_down;
+	bool	center_mouse;
+	double	cam_sens_h;
+	double	cam_sens_v;
+}	t_mouse;
+
+typedef struct s_menu
+{
+	t_image		logo;
+	t_image		bg;
+	t_image		new_game_0;
+	t_image		new_game_1;
+	t_image		exit_0;
+	t_image		exit_1;
+	t_image		cont_0;
+	t_image		cont_1;
+	t_image		cont_2;
+	t_image		music_0;
+	t_image		music_1;
+	t_image		hint;
+}	t_menu;
+
+typedef struct s_player_data
+{
+	t_vector	player_pos;
+	float		player_angle;
+}	t_player_data;
 
 typedef struct s_data
 {
+	bool			game_started;
 	t_mlx			mlx;
 	t_player		player;
 	t_keys_status	key_pressed;
@@ -217,7 +283,33 @@ typedef struct s_data
 	t_image			texture_no;
 	t_image			texture_so;
 	t_image			texture_we;
+	t_image			texture_door;
 	t_size			screen;
+	t_mouse			mouse;
+	t_select		select_item;
+	t_menu			menu;
+	t_vector		mouse_pos_new;
+	t_vector		mouse_pos;
+	int				start;
+	int				door_framemv;
+	bool			player_looking_at_door;
+	int				door_open;
+	t_vector		door_pos;
+	bool			looking_door;
+	int				up_down;
+	int				jump;
+	bool			jumping;
+	int				one_jump;
+	t_player_data	p_data;
+	t_image			north_icon;
+	t_vector		north_icon_pos;
+	bool			_switch;
+	double			offset;
+	pid_t			server;
+	pid_t			tracker;
+	pid_t			bgm;
+	int				music;
+	bool			music_switch;
 }	t_data;
 
 typedef struct s_wall_text
@@ -226,27 +318,33 @@ typedef struct s_wall_text
 	int			wallheight;
 	int			top;
 	int			btm;
-	float		unit;
-	float		pxunit;
+	float		yunit;
+	float		xunit;
 	int			color;
 	int			y;
 	t_vector	t_offset;
+	t_vector2	step;
 }	t_wall_text;
 
 /*
-	* DATA
+	* GARBAGE COLLECTOR
 */
 t_data		*data_hook(t_data *data);
-void		data_init(t_data *data, int ac, char **av);
 
 /*
+	* 	INITIALIZATION
+*/
+void		data_init(t_data *data, int ac, char **av);
+void		reset_doors(char **map);
+/**
  * 	STRINGS
 */
 char		*str_skip(char *str, char *chars_to_skip);
 int			str_equal(char *s1, char *s2);
 char		*str_skip_wsp(char *str);
+int			strn_equal(char *s1, char *s2, int n);
 
-/*
+/**
  * ERRORS HANDLING
 */
 void		safe_exit(int status);
@@ -263,6 +361,7 @@ void		check_file(int ac, char **av);
 void		init_lines(void);
 void		check_map(void);
 void		check_color(char type, char *value);
+void		check_texture(char *varname, char *value);
 
 /*
 	* SAFE FUNCTIONS
@@ -273,6 +372,7 @@ char		*safe_strchr(char *s, char c);
 void		*safe_calloc(size_t size);
 char		*safe_strdup(char *s);
 size_t		safe_strlen(char *str);
+void		destroy_textures(void);
 
 /*
 	* FREE MEMORY
@@ -282,11 +382,16 @@ void		free_tab(char **array);
 /*
 	* IO OPERATORS
 */
+
 char		**append_2d(char **old_tab, char *to_append);
 void		set_screen_size(void);
 void		print(int fd, char *msg, int endl);
 void		print_2d(char **arr);
 float		normalize_angle(float angle);
+void		normalize_sensibility(void);
+void		put_2_window(void);
+void		put_weapon(void);
+void		player_effects(void);
 
 /*
 	* GAME
@@ -294,21 +399,23 @@ float		normalize_angle(float angle);
 void		init_player(t_data *data);
 void		run_game(t_data	*data);
 void		put_wall(t_data *data, int i, t_ray *ray);
-void		put_bgd(t_image *image, int ceil_color, int floor_color);
-void		set_directions(t_ray *ray, int ray_type);
-void		check_texture(char *varname, char *value);
-
-/*
-	* RAY
-*/
+int			check_hit(t_vector2 coords,
+				t_ray *ray, t_vector2 *point, t_vector2 step);
 void		send_ray(t_ray *ray);
-int			check_hit(t_vector2 coords, t_ray *ray);
-void		set_directions(t_ray *ray, int ray_type);
-void		set_ray_side(t_ray *ray);
 float		get_distance(float angle, t_vector2 end);
 t_vector2	get_step(t_ray ray, int type);
 t_vector2	get_intercept_v(t_ray ray);
 t_vector2	get_intercept_h(t_ray ray);
+void		set_directions(t_ray *ray, int ray_type);
+void		set_ray_side(t_ray *ray);
+void		handle_selected_item(int key);
+void		destroy_this(void **img_ptr);
+void		show_menu(void);
+void		handle_door(t_data *data, int keycode);
+void		player_effects(void);
+void		put_weapon(void);
+int			is_door_minimap(t_vector2 pos, t_size sc, t_vector2 targ);
+
 /*
 	* IMAGES
 */
@@ -316,17 +423,24 @@ t_image		t_image_create(int sizex, int sizey, int default_color);
 void		t_image_update_pixel(t_image *imgptr, int x, int y, int new_color);
 void		t_image_clear_color(t_image *imgptr, int color);
 t_image		t_image_load_xpm(char *filename);
+void		load_menu_images(t_menu *menu);
+void		destroy_menu(t_menu *menu);
 
 /*
 	* MATH
 */
 float		deg_to_rad(float angle);
+int			imin(int a, int b);
+int			imax(int a, int b);
+void		irange(int *v, int min, int max);
+int			iinrange(int n, int min, int max);
 
 /*
 	* EVENTS
 */
 int			ev_key_up(int keycode, t_data *data);
 int			ev_key_down(int keycode, t_data *data);
+int			ev_mouse_moved(int x, int y, void *data);
 int			ev_destroy(t_data *data);
 
 /**
@@ -334,5 +448,29 @@ int			ev_destroy(t_data *data);
  */
 void		draw_line(t_image *image, int color, t_vector2 from, t_vector2 to);
 void		handle_input(t_data *data, float radi);
+void		put_player_shape(double size);
+
+/*
+	* MENU
+*/
+
+void		hide_menu(void);
+void		rest_player(void);
+void		put_to_win(int posx, int pox_y, t_image image);
+void		put_cub(t_data *data, t_vector2 offset, int size);
+
+/*
+	* PLAY BACK
+*/
+
+void		tracker(void);
+void		server(void);
+void		play_effect(void);
+void		signal_handler(int signal);
+bool		catch_signals(void);
+
+void	handle_key_down(t_data *data);
+void	handle_key_up(t_data *data);
+void	handle_select_event(t_data *data);
 
 #endif

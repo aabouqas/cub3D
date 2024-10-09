@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_game.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mait-elk <mait-elk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aabouqas <aabouqas@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/15 13:06:57 by mait-elk          #+#    #+#             */
-/*   Updated: 2024/08/03 17:13:12 by mait-elk         ###   ########.fr       */
+/*   Updated: 2024/10/09 11:22:23 by aabouqas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,16 @@ void	sliding_against_wall(bool mv_x, bool mv_y, t_vector2 axis)
 	if (mv_y != mv_x && mv_x == true)
 	{
 		if (map[(int)(pp.y) / TILE_SIZE][(int)(pp.x + 10) / TILE_SIZE] == '1')
-			data->player.position.x -= axis.x * PLAYER_SPEED;
+			data->player.position.x -= axis.x * P_SPEED;
 		if (map[(int)(pp.y) / TILE_SIZE][(int)(pp.x - 10) / TILE_SIZE] == '1')
-			data->player.position.x -= axis.x * PLAYER_SPEED;
+			data->player.position.x -= axis.x * P_SPEED;
 	}
 	if (mv_y != mv_x && mv_y == true)
 	{
 		if (map[(int)(pp.y + 10) / TILE_SIZE][(int)(pp.x) / TILE_SIZE] == '1')
-			data->player.position.y -= axis.y * PLAYER_SPEED;
+			data->player.position.y -= axis.y * P_SPEED;
 		if (map[(int)(pp.y - 10) / TILE_SIZE][(int)(pp.x) / TILE_SIZE] == '1')
-			data->player.position.y -= axis.y * PLAYER_SPEED;
+			data->player.position.y -= axis.y * P_SPEED;
 	}
 }
 
@@ -42,21 +42,27 @@ void	mooove(bool *mv_x, bool *mv_y, t_vector2 axis)
 	t_data		*data;
 	char		**map;
 	t_vector2	pp;
+	float		speed;
 
 	data = data_hook(NULL);
 	map = data->map;
 	pp = data->player.position;
+	speed = (P_SPEED + (data->key_pressed.shift * 2));
 	if (map[(int)(pp.y) / TILE_SIZE][
-		(int)(pp.x + (axis.x * 10)) / TILE_SIZE] != '1')
+		(int)(pp.x + (axis.x * 10)) / TILE_SIZE] != '1'
+		&& map[(int)(pp.y) / TILE_SIZE][
+		(int)((pp.x + (axis.x * 10))) / TILE_SIZE] != 'D')
 	{
 		*mv_x = true;
-		data->player.position.x += axis.x * PLAYER_SPEED;
+		data->player.position.x += axis.x * speed;
 	}
 	if (map[(int)(pp.y + (axis.y * 10)) / TILE_SIZE][
-		(int)(pp.x) / TILE_SIZE] != '1')
+		(int)(pp.x) / TILE_SIZE] != '1'
+		&& map[(int)(pp.y + (axis.y * 10)) / TILE_SIZE][
+		(int)(pp.x / TILE_SIZE)] != 'D')
 	{
 		*mv_y = true;
-		data->player.position.y += axis.y * PLAYER_SPEED;
+		data->player.position.y += axis.y * speed;
 	}
 }
 
@@ -80,8 +86,8 @@ void	try_move(t_data	*data, t_vector2 axis)
 	if (map[(int)(pp.y + (axis.y * 5)) / TILE_SIZE][
 (int)(pp.x + (axis.x * 5)) / TILE_SIZE] == '1')
 	{
-		data->player.position.x -= axis.x * PLAYER_SPEED;
-		data->player.position.y -= axis.y * PLAYER_SPEED;
+		data->player.position.x -= axis.x * P_SPEED;
+		data->player.position.y -= axis.y * P_SPEED;
 	}
 }
 
@@ -120,9 +126,19 @@ void	handle_input(t_data *data, float radi)
 
 	map = data->map;
 	axis = read_keys_axis(data->key_pressed, radi);
+	data->player.is_walking = axis.x != 0 || axis.y != 0;
 	try_move(data, axis);
-	data->player.angle -= (data->key_pressed.left == true) * CAM_SENS;
-	data->player.angle += (data->key_pressed.right == true) * CAM_SENS;
+	data->player.angle += (data->key_pressed.right) * CAM_SENS;
+	data->player.angle -= (data->key_pressed.left) * CAM_SENS;
+	if (data->mouse.to_right)
+		data->player.angle += data->mouse.cam_sens_h;
+	if (data->mouse.to_left)
+		data->player.angle -= data->mouse.cam_sens_h;
+	data->up_down += data->mouse.cam_sens_v * 10 * (data->mouse.to_up);
+	data->up_down += CAM_SENS * 10 * (data->key_pressed.up);
+	data->up_down -= data->mouse.cam_sens_v * 10 * (data->mouse.to_down);
+	data->up_down -= CAM_SENS * 10 * (data->key_pressed.down);
+	irange(&data->up_down, -500, 500);
 	if (data->player.angle > 360)
 		data->player.angle -= 360;
 	if (data->player.angle < 0)
